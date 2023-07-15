@@ -1,5 +1,5 @@
 import React from 'react';
-import SButton from '../Button';
+import Button from '../Button';
 import { useNavigate } from 'react-router-dom';
 import { Image, Spinner } from 'react-bootstrap';
 import moment from 'moment';
@@ -52,24 +52,24 @@ function TbodyWithAction({
                 <td>
                   {customAction && customAction(data._id, data.statusEvent)}
                   {editUrl && (
-                    <SButton
-                      classname={'mx-2'}
+                    <Button
                       variant='success'
+                      classname={'mx-2'}
                       size={'sm'}
                       action={() => navigate(`${editUrl}/${data._id}`)}
                     >
                       Edit
-                    </SButton>
+                    </Button>
                   )}
                   {deleteAction && (
-                    <SButton
-                      className={''}
+                    <Button
+                      className={'mx-2'}
                       variant='danger'
                       size={'sm'}
                       action={() => deleteAction(data._id)}
                     >
                       Hapus
-                    </SButton>
+                    </Button>
                   )}
                 </td>
               )}

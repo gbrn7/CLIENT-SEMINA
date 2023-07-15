@@ -8,6 +8,9 @@ import {
   START_FETCHING_LISTS_EVENTS,
   ERROR_FETCHING_LISTS_EVENTS,
   SUCCESS_FETCHING_LISTS_EVENTS,
+  START_FETCHING_LISTS_ROLES,
+  ERROR_FETCHING_LISTS_ROLES,
+  SUCCESS_FETCHING_LISTS_ROLES,
 } from './constants';
 
 import { getData } from '../../utils/fetch';
@@ -16,6 +19,7 @@ import debounce from 'debounce-promise';
 let debouncedFetchListsCategories = debounce(getData, 1000);
 let debouncedFetchListsTalents = debounce(getData, 1000);
 let debouncedFetchListsEvents = debounce(getData, 1000);
+let debouncedFetchListsRoles = debounce(getData, 1000);
 
 export const startFetchingListsCategories = () => {
   return {
@@ -43,15 +47,17 @@ export const fetchListCategories = () => {
     try {
       let res = await debouncedFetchListsCategories('/cms/categories');
 
+
       let _temp = [];
 
-      res.data.data.forEach((res) => {
+      res.data.data.categories.forEach((res) => {
         _temp.push({
           value: res._id,
           label: res.name,
           target: { value: res._id, name: 'category' },
         });
       });
+
 
       dispatch(
         successFetchingListCategories({
@@ -100,6 +106,7 @@ export const fetchListTalents = () => {
         });
       });
 
+
       dispatch(
         successFetchingListTalents({
           talents: _temp,
@@ -141,6 +148,7 @@ export const fetchListEvents = () => {
 
       let _temp = [];
 
+
       res.data.data.forEach((res) => {
         _temp.push({
           value: res._id,
@@ -159,3 +167,53 @@ export const fetchListEvents = () => {
     }
   };
 };
+
+// role
+
+export const startFetchingListsRoles = () => {
+  return {
+    type: START_FETCHING_LISTS_ROLES,
+  };
+};
+
+export const successFetchingListRoles = ({ roles }) => {
+  return {
+    type: SUCCESS_FETCHING_LISTS_ROLES,
+    roles,
+  };
+};
+
+export const errorFetchingListRoles = () => {
+  return {
+    type: ERROR_FETCHING_LISTS_ROLES,
+  };
+};
+
+export const fetchListRoles = () => {
+  return async (dispatch) => {
+    dispatch(startFetchingListsRoles());
+
+    try {
+      let res = await debouncedFetchListsRoles('/cms/talentsRoles');
+
+      let _temp = [];
+
+      res.data.data.forEach((res) => {
+        _temp.push({
+          value: res,
+          label: res,
+          target: { value: res, name: 'role' },
+        });
+      });
+
+      dispatch(
+        successFetchingListRoles({
+          roles: _temp,
+        })
+      );
+    } catch (error) {
+      dispatch(errorFetchingListRoles());
+    }
+  };
+};
+

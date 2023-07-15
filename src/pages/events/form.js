@@ -10,8 +10,9 @@ import {
 } from 'react-bootstrap';
 import Button from '../../components/Button';
 import TextInputWithLabel from '../../components/TextInputWithLabel';
-import SelectBox from '../../components/SelectBox';
+import AsyncSelectBox from '../../components/AsyncSelectBox';
 import { config } from '../../configs';
+import SelectBox from '../../components/SelectBox';
 
 export default function EventsForm({
   handleSubmit,
@@ -26,6 +27,8 @@ export default function EventsForm({
   handlePlusTicket,
   handleMinusTicket,
   handleChangeTicket,
+  options,
+  defaultValue
 }) {
   return (
     <Form className='mb-2'>
@@ -99,11 +102,11 @@ export default function EventsForm({
 
       <Form.Label>Key Point</Form.Label>
       <Row>
-        {form.keyPoint.map((key, index) => (
-          <Col sm={6}>
+        {form?.keyPoint?.map((key, index) => (
+          <Col sm={6} key={index}>
             <InputGroup className='mb-3' key={index}>
               <FormControl
-                placeholder='Masukan keypoint'
+                placeholder='Masukan keyPoint'
                 value={key}
                 type='text'
                 name='key'
@@ -112,7 +115,7 @@ export default function EventsForm({
                 }}
               />
               {index !== 0 && (
-                <InputGroup.Text id='basic-addon2'>
+                <InputGroup.Text id='basic-addon2' key={index}>
                   <CloseButton onClick={() => handleMinusKeyPoint(index)} />
                 </InputGroup.Text>
               )}
@@ -167,13 +170,14 @@ export default function EventsForm({
 
       {form.tickets.map((tic, index) => (
         <Row>
-          <Col sm={6}>
+          <Col sm={6} >
             <TextInputWithLabel
               placeholder={'Masukan tipe tiket'}
               label={'type'}
               name='type'
               value={tic.type}
               type='text'
+              key={index}
               onChange={(e) => handleChangeTicket(e, index)}
             />
           </Col>
@@ -184,6 +188,7 @@ export default function EventsForm({
               name='price'
               value={tic.price}
               type='number'
+              key={index}
               onChange={(e) => handleChangeTicket(e, index)}
             />
           </Col>
@@ -192,20 +197,30 @@ export default function EventsForm({
               placeholder={'Masukan tipe tiket'}
               label={'Stock'}
               name='stock'
+              key={index}
               value={tic.stock}
               type='number'
               onChange={(e) => handleChangeTicket(e, index)}
             />
           </Col>
           <Col sm={index !== 0 ? 5 : 6}>
-            <TextInputWithLabel
-              placeholder={'Masukan status'}
-              label={'Status'}
-              name='status'
-              value={tic.status}
-              type='text'
-              onChange={(e) => handleChangeTicket(e, index)}
-            />
+            {defaultValue ?
+              <SelectBox
+                placeholder={'Masukan status kategori tiket'}
+                options={options}
+                name={`statusTicketCategories`}
+                label={'Status Tiket Kategori'}
+                handleChange={(e) => handleChangeTicket(e, index)}
+                defaultValue={tic.statusTicketCategories ? { label: 'Publish', value: tic.statusTicketCategories } : { label: 'Draft', value: false }}
+              /> :
+              <SelectBox
+                placeholder={'Masukan status kategori tiket'}
+                options={options}
+                name='statusTicketCategories'
+                label={'Status Tiket Kategori'}
+                handleChange={(e) => handleChangeTicket(e, index)}
+              />
+            }
           </Col>
           {index !== 0 && (
             <Col

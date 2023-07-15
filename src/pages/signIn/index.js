@@ -45,7 +45,7 @@ function PageSignin() {
 
       navigate('/');
     } catch (error) {
-      console.log(error.response.data.msg);
+      // console.log(error.response.data.msg);
       alertHandle(error?.response?.data?.msg ?? 'Internal Servel Error', 'danger');
       setIsLoading(false);
     }

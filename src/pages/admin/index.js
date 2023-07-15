@@ -5,20 +5,20 @@ import SBreadCrumb from '../../components/BreadCrumb';
 import SButton from '../../components/Button';
 import Table from '../../components/TableWithAction';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchCategories, setKeyword, setPage } from '../../redux/categories/actions';
 import SAlert from '../../components/Alert';
 import Swal from 'sweetalert2';
 import { deleteData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
-import { accessCategories } from '../../const/access';
+import { accessAdmin } from '../../const/access';
 import SearchInput from '../../components/SearchInput';
+import { fetchAdmin, setKeyword } from '../../redux/admin/actions';
 
 function Categories() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const notif = useSelector((state) => state.notif);
-  const categories = useSelector((state) => state.categories);
+  const admin = useSelector((state) => state.admin);
   const [access, setAccess] = useState({
     tambah: false,
     hapus: false,
@@ -30,8 +30,8 @@ function Categories() {
       ? JSON.parse(localStorage.getItem('auth'))
       : {};
     const access = { tambah: false, hapus: false, edit: false };
-    Object.keys(accessCategories).forEach(function (key, index) {
-      if (accessCategories[key].indexOf(role) >= 0) {
+    Object.keys(accessAdmin).forEach(function (key, index) {
+      if (accessAdmin[key].indexOf(role) >= 0) {
         access[key] = true;
       }
     });
@@ -43,10 +43,11 @@ function Categories() {
   }, []);
 
   useEffect(() => {
-    dispatch(fetchCategories());
-  }, [categories.keyword, categories.page,]);
+    dispatch((fetchAdmin()));
+  }, [admin.keyword]);
 
   const handleDelete = (id) => {
+    console.log(id);
     Swal.fire({
       title: 'Apa kamu yakin?',
       text: 'Anda tidak akan dapat mengembalikan ini!',
@@ -58,27 +59,27 @@ function Categories() {
       cancelButtonText: 'Batal',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await deleteData(`/cms/categories/${id}`);
+        const res = await deleteData(`/cms/admin/${id}`);
         dispatch(
           setNotif(
             true,
             'success',
-            `berhasil hapus kategori ${res.data.data.name}`
+            `berhasil hapus admin ${res.data.data.name}`
           )
         );
-        dispatch(fetchCategories());
+        dispatch(fetchAdmin());
       }
     });
   };
 
   return (
     <Container className='mt-3'>
-      <SBreadCrumb textSecound={'Categories'} />
+      <SBreadCrumb textSecound={'Admin'} />
 
       {access.tambah && (
         <div className='mb-3'>
           <SButton
-            action={() => navigate('/categories/create')}
+            action={() => navigate('/admin/create')}
           >
             Tambah
           </SButton>
@@ -86,8 +87,8 @@ function Categories() {
       )}
 
       <SearchInput
-        query={categories.keyword}
-        placeholder={'Masukan pencarian nama kategori disini'}
+        query={admin.keyword}
+        placeholder={'Masukan pencarian nama admin'}
         handleChange={(e) => dispatch(setKeyword(e.target.value))}
       />
 
@@ -96,14 +97,13 @@ function Categories() {
       )}
 
       <Table
-        status={categories.status}
-        thead={['Nama', 'Aksi']}
-        data={categories.data}
+        status={admin.status}
+        thead={['Nama Admin', 'Aksi']}
+        data={admin.data}
         tbody={['name']}
-        pages={categories.pages}
-        editUrl={access.edit ? `/categories/edit` : null}
+        editUrl={access.edit ? `/admin/edit` : null}
         deleteAction={access.hapus ? (id) => handleDelete(id) : null}
-        handlePageClick={({ selected }) => dispatch(setPage(selected + 1))}
+        withoutPagination
       />
     </Container>
   );

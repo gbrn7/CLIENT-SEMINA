@@ -1,9 +1,8 @@
 import {
-  START_FETCHING_TALENTS,
-  SUCCESS_FETCHING_TALENTS,
-  ERROR_FETCHING_TALENTS,
+  START_FETCHING_ADMIN,
+  SUCCESS_FETCHING_ADMIN,
+  ERROR_FETCHING_ADMIN,
   SET_KEYWORD,
-  SET_ROLE,
 } from './constants';
 
 const statuslist = {
@@ -16,35 +15,28 @@ const statuslist = {
 const initialState = {
   data: [],
   keyword: '',
-  role: '',
   status: statuslist.idle,
 };
 
 export default function reducer(state = initialState, action) {
   switch (action.type) {
-    case START_FETCHING_TALENTS:
+    case START_FETCHING_ADMIN:
       return { ...state, status: statuslist.process };
 
-    case ERROR_FETCHING_TALENTS:
+    case ERROR_FETCHING_ADMIN:
       return { ...state, status: statuslist.error };
 
-    case SUCCESS_FETCHING_TALENTS:
+    case SUCCESS_FETCHING_ADMIN:
       return {
         ...state,
         status: statuslist.success,
-        data: action.talents,
+        data: action.admin,
       };
 
     case SET_KEYWORD:
       return {
         ...state,
         keyword: action.keyword,
-      };
-
-    case SET_ROLE:
-      return {
-        ...state,
-        role: action.role,
       };
 
     default:

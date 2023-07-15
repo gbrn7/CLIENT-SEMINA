@@ -18,6 +18,12 @@ function EventsCreate() {
   const { eventId } = useParams();
   const dispatch = useDispatch();
   const lists = useSelector((state) => state.lists);
+
+  const options = [
+    { value: true, label: 'Publish', name: 'statusTicketCategories' },
+    { value: false, label: 'Draft', name: 'statusTicketCategories' },
+  ]
+
   const [form, setForm] = useState({
     title: '',
     date: '',
@@ -30,7 +36,7 @@ function EventsCreate() {
     tickets: [
       {
         type: '',
-        status: '',
+        statusTicketCategories: '',
         stock: '',
         price: '',
       },
@@ -50,6 +56,7 @@ function EventsCreate() {
   const fetchOneCategories = async () => {
     const res = await getData(`/cms/events/${eventId}`);
 
+    // console.log(res);
     setForm({
       ...form,
       title: res.data.data.title,
@@ -72,6 +79,8 @@ function EventsCreate() {
       },
       tickets: res.data.data.tickets,
     });
+
+    // console.log(form.keyPoint);
   };
 
   useEffect(() => {
@@ -209,13 +218,14 @@ function EventsCreate() {
     let _temp = [...form.tickets];
     _temp.push({
       type: '',
-      status: '',
+      statusTicketCategories: '',
       stock: '',
       price: '',
     });
 
     setForm({ ...form, tickets: _temp });
   };
+
   const handleMinusTicket = (index) => {
     let _temp = [...form.tickets];
     let removeIndex = _temp
@@ -231,9 +241,13 @@ function EventsCreate() {
   const handleChangeTicket = (e, i) => {
     let _temp = [...form.tickets];
 
-    _temp[i][e.target.name] = e.target.value;
-
+    if (e?.target?.name) {
+      _temp[i][e.target.name] = e.target.value;
+    } else {
+      _temp[i][e.name] = e.value;
+    }
     setForm({ ...form, tickets: _temp });
+
   };
 
   return (
@@ -241,7 +255,7 @@ function EventsCreate() {
       <BreadCrumb
         textSecound={'Events'}
         urlSecound={'/events'}
-        textThird='Create'
+        textThird='Edit'
       />
       {alert.status && <Alert type={alert.type} message={alert.message} />}
       <Form
@@ -256,6 +270,8 @@ function EventsCreate() {
         handlePlusTicket={handlePlusTicket}
         handleMinusTicket={handleMinusTicket}
         handleChangeTicket={handleChangeTicket}
+        options={options}
+        defaultValue={true}
         edit
       />
     </Container>

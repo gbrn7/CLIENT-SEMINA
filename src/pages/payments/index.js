@@ -2,15 +2,16 @@ import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import SBreadCrumb from '../../components/BreadCrumb';
-import Button from '../../components/Button';
+import SButton from '../../components/Button';
 import Table from '../../components/TableWithAction';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchPayments } from '../../redux/payments/actions';
+import { fetchPayments, setKeyword } from '../../redux/payments/actions';
 import SAlert from '../../components/Alert';
 import Swal from 'sweetalert2';
 import { deleteData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
 import { accessPayments } from '../../const/access';
+import SearchInput from '../../components/SearchInput';
 
 function PaymentsPage() {
   const navigate = useNavigate();
@@ -44,7 +45,7 @@ function PaymentsPage() {
 
   useEffect(() => {
     dispatch(fetchPayments());
-  }, [dispatch]);
+  }, [dispatch, payments.keyword]);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -78,14 +79,23 @@ function PaymentsPage() {
       <SBreadCrumb textSecound={'Payments'} />
 
       {access.tambah && (
-        <Button className={'mb-3'} action={() => navigate('/payments/create')}>
-          Tambah
-        </Button>
+        <div className='mb-3'>
+          <SButton action={() => navigate('/payments/create')}>Tambah</SButton>
+        </div>
       )}
+
+      <SearchInput
+        query={payments.keyword}
+        placeholder={'Masukan pencarian tipe pembayaran disini'}
+        handleChange={(e) => dispatch(setKeyword(e.target.value))}
+      />
+
 
       {notif.status && (
         <SAlert type={notif.typeNotif} message={notif.message} />
       )}
+
+
       <Table
         status={payments.status}
         thead={['Type', 'Avatar', 'Aksi']}

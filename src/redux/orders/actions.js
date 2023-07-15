@@ -65,6 +65,8 @@ export const fetchOrders = () => {
         });
       });
 
+      // console.log(params);
+
       dispatch(
         successFetchingOrders({
           orders: _temp,

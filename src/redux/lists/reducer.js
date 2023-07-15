@@ -8,6 +8,9 @@ import {
   START_FETCHING_LISTS_EVENTS,
   SUCCESS_FETCHING_LISTS_EVENTS,
   ERROR_FETCHING_LISTS_EVENTS,
+  START_FETCHING_LISTS_ROLES,
+  ERROR_FETCHING_LISTS_ROLES,
+  SUCCESS_FETCHING_LISTS_ROLES,
 } from './constants';
 
 const statuslist = {
@@ -24,6 +27,8 @@ const initialState = {
   statusTalents: statuslist.idle,
   events: [],
   statusEvents: statuslist.idle,
+  roles: [],
+  statusRoles: statuslist.idle,
 };
 
 export default function reducer(state = initialState, action) {
@@ -65,6 +70,20 @@ export default function reducer(state = initialState, action) {
         ...state,
         statusEvents: statuslist.success,
         events: action.events,
+      };
+
+
+    case START_FETCHING_LISTS_ROLES:
+      return { ...state, statusRoles: statuslist.process };
+
+    case ERROR_FETCHING_LISTS_ROLES:
+      return { ...state, statusRoles: statuslist.error };
+
+    case SUCCESS_FETCHING_LISTS_ROLES:
+      return {
+        ...state,
+        statusRoles: statuslist.success,
+        roles: action.roles,
       };
 
     default:

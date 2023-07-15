@@ -16,6 +16,12 @@ function EventsCreate() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const lists = useSelector((state) => state.lists);
+
+  const options = [
+    { value: true, label: 'Publish', name: 'statusTicketCategories' },
+    { value: false, label: 'Draft', name: 'statusTicketCategories' },
+  ]
+
   const [form, setForm] = useState({
     title: '',
     price: '',
@@ -29,7 +35,7 @@ function EventsCreate() {
     tickets: [
       {
         type: '',
-        status: '',
+        statusTicketCategories: '',
         stock: '',
         price: '',
       },
@@ -103,8 +109,6 @@ function EventsCreate() {
         });
       }
     } else if (e.target.name === 'category' || e.target.name === 'talent') {
-      console.log('e.target.name');
-      console.log(e.target.name);
       setForm({ ...form, [e.target.name]: e });
     } else {
       setForm({ ...form, [e.target.name]: e.target.value });
@@ -112,26 +116,29 @@ function EventsCreate() {
   };
 
   const handleSubmit = async () => {
-    setIsLoading(true);
+    // setIsLoading(true);
 
     const payload = {
-      date: form.date,
-      image: form.file,
       title: form.title,
-      price: form.price,
+      date: form.date,
       about: form.about,
       venueName: form.venueName,
       tagline: form.tagline,
       keyPoint: form.keyPoint,
+      statusEvent: form.status,
+      tickets: form.tickets,
       category: form.category.value,
       talent: form.talent.value,
-      status: form.status,
-      tickets: form.tickets,
+      image: form.file,
     };
+
+    // console.log(payload);
 
     const res = await postData('/cms/events', payload);
 
-    if (res.data.data) {
+    console.log(res);
+
+    if (res?.data?.data) {
       dispatch(
         setNotif(
           true,
@@ -139,6 +146,7 @@ function EventsCreate() {
           `berhasil tambah events ${res.data.data.title}`
         )
       );
+
       navigate('/events');
       setIsLoading(false);
     } else {
@@ -183,7 +191,7 @@ function EventsCreate() {
     let _temp = [...form.tickets];
     _temp.push({
       type: '',
-      status: '',
+      statusTicketCategories: '',
       stock: '',
       price: '',
     });
@@ -198,6 +206,7 @@ function EventsCreate() {
       })
       .indexOf(index);
 
+
     _temp.splice(removeIndex, 1);
     setForm({ ...form, tickets: _temp });
   };
@@ -205,9 +214,17 @@ function EventsCreate() {
   const handleChangeTicket = (e, i) => {
     let _temp = [...form.tickets];
 
-    _temp[i][e.target.name] = e.target.value;
+    if (e?.target?.name) {
+      _temp[i][e.target.name] = e.target.value;
+    } else {
+      _temp[i][e.name] = e.value;
+    }
+
+    // console.log(_temp);
 
     setForm({ ...form, tickets: _temp });
+
+    // console.log(form);
   };
 
   return (
@@ -230,6 +247,8 @@ function EventsCreate() {
         handlePlusTicket={handlePlusTicket}
         handleMinusTicket={handleMinusTicket}
         handleChangeTicket={handleChangeTicket}
+        options={options}
+        defaultValue={false}
       />
     </Container>
   );

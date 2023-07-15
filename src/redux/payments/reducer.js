@@ -2,6 +2,7 @@ import {
   START_FETCHING_PAYMENTS,
   SUCCESS_FETCHING_PAYMENTS,
   ERROR_FETCHING_PAYMENTS,
+  SET_KEYWORD,
 } from './constants';
 
 const statuslist = {
@@ -30,6 +31,12 @@ export default function reducer(state = initialState, action) {
         ...state,
         status: statuslist.success,
         data: action.payments,
+      };
+
+    case SET_KEYWORD:
+      return {
+        ...state,
+        keyword: action.keyword,
       };
 
     default:

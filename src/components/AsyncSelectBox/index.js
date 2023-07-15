@@ -1,6 +1,6 @@
 import React from 'react';
 import { Form } from 'react-bootstrap';
-import Select from 'react-select';
+import AsyncSelect from 'react-select/async';
 
 function SelectBox({
   name,
@@ -9,12 +9,14 @@ function SelectBox({
   value,
   placeholder,
   handleChange,
-  label
+  label,
+  defaultValue
 }) {
   return (
     <Form.Group className='mb-2'>
       {label && <Form.Label>{label}</Form.Label>}
-      <Select
+      <AsyncSelect
+        cacheOptions
         name={name}
         isClearable={isClearable}
         placeholder={placeholder}

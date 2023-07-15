@@ -1,8 +1,8 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import BreadCrumb from '../../components/BreadCrumb';
-import Button from '../../components/Button';
+import SButton from '../../components/Button';
 import Table from '../../components/TableWithAction';
 import SearchInput from '../../components/SearchInput';
 import { useSelector, useDispatch } from 'react-redux';
@@ -21,6 +21,7 @@ import {
   fetchListCategories,
   fetchListTalents,
 } from '../../redux/lists/actions';
+import { accessEvents } from '../../const/access';
 
 function EventPage() {
   const navigate = useNavigate();
@@ -29,6 +30,30 @@ function EventPage() {
   const notif = useSelector((state) => state.notif);
   const events = useSelector((state) => state.events);
   const lists = useSelector((state) => state.lists);
+
+  const [access, setAccess] = useState({
+    tambah: false,
+    hapus: false,
+    edit: false,
+  });
+
+
+  const checkAccess = () => {
+    let { role } = localStorage.getItem('auth')
+      ? JSON.parse(localStorage.getItem('auth'))
+      : {};
+    const access = { tambah: false, hapus: false, edit: false };
+    Object.keys(accessEvents).forEach(function (key, index) {
+      if (accessEvents[key].indexOf(role) >= 0) {
+        access[key] = true;
+      }
+    });
+    setAccess(access);
+  };
+
+  useEffect(() => {
+    checkAccess();
+  }, []);
 
   useEffect(() => {
     dispatch(fetchEvents());
@@ -57,7 +82,7 @@ function EventPage() {
           setNotif(
             true,
             'success',
-            `berhasil hapus speaker ${res.data.data.title}`
+            `berhasil hapus event ${res.data.data.title}`
           )
         );
 
@@ -98,12 +123,18 @@ function EventPage() {
 
   return (
     <Container className='mt-3'>
-      <Button action={() => navigate('/events/create')}>Tambah</Button>
+      {access.tambah && (
+        <div className='mb-3'>
+          <SButton action={() => navigate('/events/create')}>Tambah</SButton>
+        </div>
+      )}
+
       <BreadCrumb textSecound={'Events'} />
       <Row>
         <Col>
           <SearchInput
             name='keyword'
+            placeholder={'Masukan pencarian nama event disini'}
             query={events.keyword}
             handleChange={(e) => dispatch(setKeyword(e.target.value))}
           />
@@ -157,14 +188,14 @@ function EventPage() {
         deleteAction={(id) => handleDelete(id)}
         customAction={(id, status = '') => {
           return (
-            <Button
+            <SButton
               className={'mx-2'}
               variant='primary'
               size={'sm'}
               action={() => handleChangeStatus(id, status)}
             >
               Change Status
-            </Button>
+            </SButton>
           );
         }}
         withoutPagination

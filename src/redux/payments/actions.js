@@ -2,6 +2,7 @@ import {
   START_FETCHING_PAYMENTS,
   SUCCESS_FETCHING_PAYMENTS,
   ERROR_FETCHING_PAYMENTS,
+  SET_KEYWORD,
 } from './constants';
 
 import { getData } from '../../utils/fetch';
@@ -30,7 +31,7 @@ export const errorFetchingPayments = () => {
 };
 
 export const fetchPayments = () => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch(startFetchingPayments());
 
     try {
@@ -38,7 +39,11 @@ export const fetchPayments = () => {
         dispatch(clearNotif());
       }, 5000);
 
-      let res = await debouncedFetchPayments('/cms/payments');
+      let params = {
+        keyword: getState().payments.keyword,
+      };
+
+      let res = await debouncedFetchPayments('/cms/payments', params);
 
       res.data.data.forEach((res) => {
         res.avatar = res.image.name;
@@ -52,5 +57,12 @@ export const fetchPayments = () => {
     } catch (error) {
       dispatch(errorFetchingPayments());
     }
+  };
+};
+
+export const setKeyword = (keyword) => {
+  return {
+    type: SET_KEYWORD,
+    keyword,
   };
 };

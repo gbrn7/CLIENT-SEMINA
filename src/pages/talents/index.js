@@ -1,23 +1,27 @@
 import React, { useEffect, useState } from 'react';
-import { Container } from 'react-bootstrap';
+import { Col, Container, Row } from 'react-bootstrap';
 import { useNavigate } from 'react-router-dom';
 import BreadCrumb from '../../components/BreadCrumb';
-import Button from '../../components/Button';
+import SButton from '../../components/Button';
 import Table from '../../components/TableWithAction';
 import SearchInput from '../../components/SearchInput';
 import { useSelector, useDispatch } from 'react-redux';
-import { fetchTalents, setKeyword } from '../../redux/talents/actions';
+import { fetchTalents, setKeyword, setRoles } from '../../redux/talents/actions';
 import AlertMessage from '../../components/Alert';
 import Swal from 'sweetalert2';
 import { deleteData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
 import { accessTalents } from '../../const/access';
+import SelectBox from '../../components/SelectBox';
+import { fetchListRoles } from '../../redux/lists/actions';
 
 function TalentsPage() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const notif = useSelector((state) => state.notif);
   const talents = useSelector((state) => state.talents);
+  const lists = useSelector((state) => state.lists);
 
   const [access, setAccess] = useState({
     tambah: false,
@@ -44,7 +48,11 @@ function TalentsPage() {
 
   useEffect(() => {
     dispatch(fetchTalents());
-  }, [dispatch, talents.keyword]);  //it will execute in first render and when dispatch & talents.keyword change
+  }, [dispatch, talents.keyword, talents.role]);  //it will execute in first render and when dispatch & talents.keyword change
+
+  useEffect(() => {
+    dispatch(fetchListRoles());
+  }, [dispatch]);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -78,13 +86,31 @@ function TalentsPage() {
       <BreadCrumb textSecound={'Talents'} />
       {access.tambah && (
         <div className='mb-3'>
-          <Button action={() => navigate('/talents/create')}>Tambah</Button>
+          <SButton action={() => navigate('/talents/create')}>Tambah</SButton>
         </div>
       )}
-      <SearchInput
-        query={talents.keyword}
-        handleChange={(e) => dispatch(setKeyword(e.target.value))}
-      />
+
+      <Row>
+        <Col>
+          <SearchInput
+            query={talents.keyword}
+            placeholder={'Masukan pencarian nama talent disini'}
+            handleChange={(e) => dispatch(setKeyword(e.target.value))}
+          />
+        </Col>
+        <Col>
+          <SelectBox
+            placeholder={'Masukan pencarian role'}
+            name='role'
+            value={talents.roles}
+            options={lists.roles}
+            isClearable={true}
+            handleChange={(e) => dispatch(setRoles(e))}
+          />
+        </Col>
+      </Row>
+
+
       {notif.status && (
         <AlertMessage type={notif.typeNotif} message={notif.message} />
       )}

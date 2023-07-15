@@ -3,6 +3,7 @@ import {
   SUCCESS_FETCHING_TALENTS,
   ERROR_FETCHING_TALENTS,
   SET_KEYWORD,
+  SET_ROLE,
 } from './constants';
 
 import { getData } from '../../utils/fetch';
@@ -40,8 +41,11 @@ export const fetchTalents = () => {
       }, 5000);
 
       let params = {
-        keyword: getState().talents.keyword,
+        keyword: getState().talents.keyword || '',
+        role: getState().talents?.role?.value || '',
       };
+
+      // console.log(params);
 
       let res = await debouncedFetchTalents('/cms/talents', params);
 
@@ -64,5 +68,12 @@ export const setKeyword = (keyword) => {
   return {
     type: SET_KEYWORD,
     keyword,
+  };
+};
+
+export const setRoles = (role) => {
+  return {
+    type: SET_ROLE,
+    role,
   };
 };
