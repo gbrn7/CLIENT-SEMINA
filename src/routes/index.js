@@ -11,6 +11,7 @@ import SNavbar from '../components/Navbar';
 import { EventsRoute } from './EventsRoute';
 import { OrdersRoute } from './OrdersRoute';
 import { AdminRoute } from './AdminRoute';
+import { OrganizersRoute } from './OrganizersRoute';
 
 export function AppRoutes() {
   return (
@@ -39,6 +40,7 @@ export function AppRoutes() {
         <Route path='events/*' element={<EventsRoute />} />
         <Route path='admin/*' element={<AdminRoute />} />
         <Route path='orders/*' element={<OrdersRoute />} />
+        <Route path='organizers/*' element={<OrganizersRoute />} />
         <Route path='' element={<Navigate to='/dashboard' replace={true} />} />
       </Route>
     </Routes>

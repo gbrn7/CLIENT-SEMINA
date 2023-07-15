@@ -8,15 +8,16 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 import { setNotif } from '../../redux/notif/actions';
 
-function AdminCreate() {
+function OrganizerCreate() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [form, setForm] = useState({
+    organizer: '',
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'admin'
+    role: 'organizer'
   });
 
   const [alert, setAlert] = useState({
@@ -33,16 +34,16 @@ function AdminCreate() {
 
   const handleSubmit = async () => {
     setIsLoading(true);
-    const res = await postData('/cms/admin', form);
+    const res = await postData('/cms/organizer', form);
     if (res?.data?.data) {
       dispatch(
         setNotif(
           true,
           'success',
-          `berhasil tambah kategori ${res.data.data.name}`
+          `berhasil tambah organizer ${res.data.data.name}`
         )
       );
-      navigate('/admin');
+      navigate('/organizers');
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -58,9 +59,9 @@ function AdminCreate() {
   return (
     <Container>
       <SBreadCrumb
-        textSecound={'Admin'}
-        urlSecound={'/admin'}
-        textThird='admin'
+        textSecound={'Organizers'}
+        urlSecound={'/organizers'}
+        textThird='Create'
       />
       {alert.status && <SAlert type={alert.type} message={alert.message} />}
       <Form
@@ -73,4 +74,4 @@ function AdminCreate() {
   );
 }
 
-export default AdminCreate;
+export default OrganizerCreate;

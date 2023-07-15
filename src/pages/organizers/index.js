@@ -9,16 +9,16 @@ import SAlert from '../../components/Alert';
 import Swal from 'sweetalert2';
 import { deleteData } from '../../utils/fetch';
 import { setNotif } from '../../redux/notif/actions';
-import { accessAdmin } from '../../const/access';
+import { accessOrganizers } from '../../const/access';
 import SearchInput from '../../components/SearchInput';
-import { fetchAdmin, setKeyword } from '../../redux/admin/actions';
+import { fetchOrganizers, setKeyword } from '../../redux/organizers/actions';
 
-function Categories() {
+function Organizers() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
   const notif = useSelector((state) => state.notif);
-  const admin = useSelector((state) => state.admin);
+  const organizers = useSelector((state) => state.organizers);
   const [access, setAccess] = useState({
     tambah: false,
     hapus: false,
@@ -30,8 +30,8 @@ function Categories() {
       ? JSON.parse(localStorage.getItem('auth'))
       : {};
     const access = { tambah: false, hapus: false, edit: false };
-    Object.keys(accessAdmin).forEach(function (key, index) {
-      if (accessAdmin[key].indexOf(role) >= 0) {
+    Object.keys(accessOrganizers).forEach(function (key, index) {
+      if (accessOrganizers[key].indexOf(role) >= 0) {
         access[key] = true;
       }
     });
@@ -43,8 +43,9 @@ function Categories() {
   }, []);
 
   useEffect(() => {
-    dispatch((fetchAdmin()));
-  }, [admin.keyword]);
+    console.log('test')
+    dispatch((fetchOrganizers()));
+  }, [organizers.keyword, organizers.page,]);
 
   const handleDelete = (id) => {
     Swal.fire({
@@ -58,27 +59,27 @@ function Categories() {
       cancelButtonText: 'Batal',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        const res = await deleteData(`/cms/admin/${id}`);
+        const res = await deleteData(`/cms/organizers/${id}`);
         dispatch(
           setNotif(
             true,
             'success',
-            `berhasil hapus admin ${res.data.data.name}`
+            `berhasil hapus organizer ${res.data.data.name}`
           )
         );
-        dispatch(fetchAdmin());
+        dispatch(fetchOrganizers());
       }
     });
   };
 
   return (
     <Container className='mt-3'>
-      <SBreadCrumb textSecound={'Admin'} />
+      <SBreadCrumb textSecound={'Organizers'} />
 
       {access.tambah && (
         <div className='mb-3'>
           <SButton
-            action={() => navigate('/admin/create')}
+            action={() => navigate('/organizers/create')}
           >
             Tambah
           </SButton>
@@ -86,8 +87,8 @@ function Categories() {
       )}
 
       <SearchInput
-        query={admin.keyword}
-        placeholder={'Masukan pencarian nama admin'}
+        query={organizers.keyword}
+        placeholder={'Masukan pencarian nama organizers'}
         handleChange={(e) => dispatch(setKeyword(e.target.value))}
       />
 
@@ -96,16 +97,15 @@ function Categories() {
       )}
 
       <Table
-        status={admin.status}
-        thead={['Nama Admin', 'Aksi']}
-        data={admin.data}
+        status={organizers.status}
+        thead={['Nama Organizer', 'Aksi']}
+        data={organizers.data}
         tbody={['name']}
-        editUrl={access.edit ? `/admin/edit` : null}
+        editUrl={access.edit ? `/organizers/edit` : null}
         deleteAction={access.hapus ? (id) => handleDelete(id) : null}
-        withoutPagination
       />
     </Container>
   );
 }
 
-export default Categories;
+export default Organizers;

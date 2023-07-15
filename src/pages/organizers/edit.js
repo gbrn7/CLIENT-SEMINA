@@ -1,23 +1,26 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container } from 'react-bootstrap';
 import SBreadCrumb from '../../components/BreadCrumb';
 import SAlert from '../../components/Alert';
 import Form from './form';
-import { postData } from '../../utils/fetch';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getData, putData } from '../../utils/fetch';
 import { useDispatch } from 'react-redux';
 import { setNotif } from '../../redux/notif/actions';
 
-function AdminCreate() {
+function OrganizerEdit() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { userId } = useParams();
   const [form, setForm] = useState({
+    organizer: '',
     name: '',
     email: '',
     password: '',
     confirmPassword: '',
-    role: 'admin'
+    role: 'organizer'
   });
+
 
   const [alert, setAlert] = useState({
     status: false,
@@ -31,18 +34,36 @@ function AdminCreate() {
     setForm({ ...form, [e.target.name]: e.target.value });
   };
 
+  const fetchOneOrganizer = async () => {
+    const res = await getData(`/cms/users/${userId}`);
+
+    setForm({
+      ...form,
+      organizer: res.data.data.organizer.organizer,
+      name: res.data.data.name,
+      email: res.data.data.email,
+      password: res.data.data.password,
+      confirmPassword: res.data.data.confirmPassword
+    });
+  };
+
+  useEffect(() => {
+    fetchOneOrganizer();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const handleSubmit = async () => {
     setIsLoading(true);
-    const res = await postData('/cms/admin', form);
+    const res = await putData(`/cms/organizer/${userId}`, form);
     if (res?.data?.data) {
       dispatch(
         setNotif(
           true,
           'success',
-          `berhasil tambah kategori ${res.data.data.name}`
+          `${res.data.data.organizer.organizer} data updated`
         )
       );
-      navigate('/admin');
+      navigate('/organizers');
       setIsLoading(false);
     } else {
       setIsLoading(false);
@@ -56,14 +77,15 @@ function AdminCreate() {
   };
 
   return (
-    <Container>
+    <Container className='mt-3'>
       <SBreadCrumb
-        textSecound={'Admin'}
-        urlSecound={'/admin'}
-        textThird='admin'
+        textSecound={'Organizers'}
+        urlSecound={'/organizers'}
+        textThird='Edit'
       />
       {alert.status && <SAlert type={alert.type} message={alert.message} />}
       <Form
+        edit
         form={form}
         isLoading={isLoading}
         handleChange={handleChange}
@@ -73,4 +95,4 @@ function AdminCreate() {
   );
 }
 
-export default AdminCreate;
+export default OrganizerEdit;

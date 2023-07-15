@@ -39,7 +39,7 @@ export const fetchEvents = () => {
     try {
       setTimeout(() => {
         dispatch(clearNotif());
-      }, 5000);
+      }, 3000);
 
       let params = {
         keyword: getState().events.keyword,

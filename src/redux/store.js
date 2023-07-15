@@ -15,10 +15,11 @@ import paymentsReducer from './payments/reducer';
 import eventsReducer from './events/reducer';
 import listsReducer from './lists/reducer';
 import ordersReducer from './orders/reducer';
+import organizersReducer from './organizers/reducer';
 
 const composerEnhancer = window.__REDUX_DEVTOOLS_EXTENSION_COMPOSE__ || compose;
 
-const rootReducers = combineReducers({  //this is the global state tha we can all anywhere
+const rootReducers = combineReducers({  //this is the global state that we can all anywhere
   auth: authReducer,
   admin: adminReducer,
   categories: categoriesReducer,
@@ -28,6 +29,7 @@ const rootReducers = combineReducers({  //this is the global state tha we can al
   events: eventsReducer,
   lists: listsReducer,
   orders: ordersReducer,
+  organizers: organizersReducer,
 });
 const store = createStore(
   rootReducers,

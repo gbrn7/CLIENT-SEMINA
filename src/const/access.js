@@ -45,3 +45,10 @@ export const accessAdmin = {
   edit: ['organizer'],
   hapus: ['organizer'],
 };
+
+export const accessOrganizers = {
+  lihat: ['owner'],
+  tambah: ['owner'],
+  edit: ['owner'],
+  hapus: ['owner'],
+};
