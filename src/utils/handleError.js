@@ -10,7 +10,7 @@ const handleError = (error) => {
       : {};
 
     return axios
-      .get(`${config.api_host_dev}/cms/refresh-token/${session.refreshToken}`)
+      .get(`${config.api_host_dev}/cms/refresh-token/${session.refreshToken}/${session.email}`)
       .then((res) => {
         console.log('res');
         console.log(res);
